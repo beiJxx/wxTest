@@ -8,6 +8,8 @@
 package nic.web.common;
 
 import nic.web.entity.AccessToken;
+import nic.web.entity.CardApiTicket;
+import nic.web.entity.JsApiTicket;
 
 /**
  * <一句话功能简述>
@@ -21,4 +23,7 @@ public class AccessTokenInfo {
 
 	public static AccessToken accessToken = null;
 	
+	public static JsApiTicket jsApiTicket = null;
+	
+	public static CardApiTicket cardApiTicket = null;
 }

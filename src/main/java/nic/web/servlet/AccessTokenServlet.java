@@ -17,6 +17,8 @@ import com.alibaba.fastjson.JSONObject;
 
 import nic.web.common.AccessTokenInfo;
 import nic.web.entity.AccessToken;
+import nic.web.entity.CardApiTicket;
+import nic.web.entity.JsApiTicket;
 import nic.web.util.NetWorkHelper;
 
 /**
@@ -75,6 +77,64 @@ public class AccessTokenServlet extends HttpServlet{
 				
 			}
 		}).start();
+		new Thread(new Runnable() {
+			public void run() {
+				while(true){
+					try {
+						if(null == AccessTokenInfo.accessToken){
+							Thread.sleep(3*1000);
+						} else {
+							AccessTokenInfo.cardApiTicket = getCardApiTicket();
+							if (null != AccessTokenInfo.cardApiTicket) {
+								Thread.sleep(7000 * 1000);
+							} else {
+								Thread.sleep(3 * 1000);
+							}
+						}
+					} catch (Exception e) {
+						System.out.println("发生异常:" + e.getMessage());
+						e.printStackTrace();
+						try {
+							Thread.sleep(1000*10);
+						} catch (Exception e2) {
+							// TODO: handle exception
+						}
+					}
+					
+					
+				}
+				
+			}
+		}).start();
+		new Thread(new Runnable() {
+			public void run() {
+				while(true){
+					try {
+						if(null == AccessTokenInfo.accessToken){
+							Thread.sleep(3*1000);
+						}else{
+							AccessTokenInfo.jsApiTicket = getJsApiTicket();
+							if (null != AccessTokenInfo.jsApiTicket) {
+								Thread.sleep(7000 * 1000);
+							} else {
+								Thread.sleep(3 * 1000);
+							}
+						}
+					} catch (Exception e) {
+						System.out.println("发生异常:" + e.getMessage());
+						e.printStackTrace();
+						try {
+							Thread.sleep(1000*10);
+						} catch (Exception e2) {
+							// TODO: handle exception
+						}
+					}
+					
+					
+				}
+				
+			}
+		}).start();
 	}
 	private AccessToken getAccessToken(String appId, String appSecret) {
 		NetWorkHelper netHelper = new NetWorkHelper();
@@ -91,8 +151,39 @@ public class AccessTokenServlet extends HttpServlet{
 		token.setAccessToken(json.getString("access_token"));
 		token.setExpiresin(json.getInteger("expires_in"));
 		return token;
-				
-				
+	}
+	
+	private JsApiTicket getJsApiTicket(){
+		NetWorkHelper netHelper = new NetWorkHelper();
+		String jsApi_ticket_url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi";
+		
+		
+		String Url = String.format(jsApi_ticket_url,AccessTokenInfo.accessToken.getAccessToken());
+		String result = netHelper.getHttpsResponse(Url, "");
+		
+		System.out.println("获取到的jsApiTicket:" + result);
+		
+		JSONObject json = JSON.parseObject(result);
+		JsApiTicket ticket = new JsApiTicket();
+		ticket.setTicket(json.getString("ticket"));
+		ticket.setExpiresIn(json.getInteger("expires_in"));
+		return ticket;
+	}
+	
+	private CardApiTicket getCardApiTicket(){
+		NetWorkHelper netHelper = new NetWorkHelper();
+		String cardApi_ticket_url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=wx_card";
+		
+		String Url = String.format(cardApi_ticket_url,AccessTokenInfo.accessToken.getAccessToken());
+		String result = netHelper.getHttpsResponse(Url, "");
+		
+		System.out.println("获取到的cardApiTicket:" + result);
+		
+		JSONObject json = JSON.parseObject(result);
+		CardApiTicket ticket = new CardApiTicket();
+		ticket.setTicket(json.getString("ticket"));
+		ticket.setExpiresIn(json.getInteger("expires_in"));
+		return ticket;
 	}
 	
 }

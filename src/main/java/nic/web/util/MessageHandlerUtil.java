@@ -184,7 +184,7 @@ public class MessageHandlerUtil {
                 break;
             case "语音":
                 //通过素材管理接口上传语音文件时得到的media_id
-                String voiceMediaId = "WYgfaHaHcxk8Re_jNJJRlC9mmNPJazsllbQvxMK4JsYuylo0mkBKFG42kzxHbwjt";
+                String voiceMediaId = "tTOs7P-0HQvhwnZvUJUb2oNOAOCDo2gkD_yRAKP5YgCazVZ2FUCwvwNQRnvwgdpO";
                 responseMessage = MessageBuildUtil.buildVoiceMessage(map,voiceMediaId);
                 break;
             case "图文":
